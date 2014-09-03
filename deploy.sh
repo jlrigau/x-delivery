@@ -34,6 +34,8 @@ fi
 # Read properties
 DOCKER_REPOSITORY=$(getGlobal docker.repository)
 DOCKER_VERSION=$(getGlobal docker.repository.version)
+DOCKER_PRIVILEGED=$(getGlobal docker.privileged)
+
 CORE_OS=$(getProp coreos.ip)
 
 PORT_MAPPING=$(getProp ports.mapping)
@@ -43,7 +45,9 @@ for MAP in $(echo $PORT_MAPPING | tr "," "\n" );do
 done
 
 ENV_ARGS="env=$APP_ENV"
-
+if [ "DOCKER_PRIVILEGED" == "true"];then
+  PRIVILEGED_ARGS="-privileged"
+fi
 # Go
 chmod 600 $APP_REPO/env/$APP_ENV.key.pem
-ssh -oStrictHostKeyChecking=no -i $APP_REPO/env/$APP_ENV.key.pem core@$CORE_OS "docker stop $APP_ENV ;docker rm $APP_ENV; docker run -d -e $ENV_ARGS --name=$APP_ENV $PORTS_ARG $DOCKER_REPOSITORY:$DOCKER_VERSION"
+ssh -oStrictHostKeyChecking=no -i $APP_REPO/env/$APP_ENV.key.pem core@$CORE_OS "docker stop $APP_ENV ;docker rm $APP_ENV; docker run -d $PRIVILEGED_ARGS -e $ENV_ARGS --name=$APP_ENV $PORTS_ARG $DOCKER_REPOSITORY:$DOCKER_VERSION"
