@@ -26,7 +26,7 @@ done
 ENV_ARGS="env=$APP_ENV"
 
 # Go
+chmod 600 $APP_REPO/env/$APP_ENV.key.pem
 
 #https://github.com/Jean-Eudes/hello-world
-ssh -i $APP_REPO/env/$APP_ENV.key.pem core@$CORE_OS "docker stop $APP_ENV ;docker rm $APP_ENV; docker run -d -e $ENV_ARGS --name=$APP_ENV $PORTS_ARG $DOCKER_REPOSITORY:$DOCKER_VERSION"
-
+ssh -oStrictHostKeyChecking=no -i $APP_REPO/env/$APP_ENV.key.pem core@$CORE_OS "docker stop $APP_ENV ;docker rm $APP_ENV; docker run -d -e $ENV_ARGS --name=$APP_ENV $PORTS_ARG $DOCKER_REPOSITORY:$DOCKER_VERSION"
